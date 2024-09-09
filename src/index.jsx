@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client";
-import { MainView } from "./components/main-view/main-view.jsx"; // Correct path
+import { MainView } from "./components/main-view/main-view.jsx"; 
 
-import "./index.scss";
 
 const App = () => {
   return <MainView />;
