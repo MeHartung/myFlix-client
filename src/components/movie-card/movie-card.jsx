@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 export const MovieCard = ({ movie, onMovieClick }) => {
   return (
@@ -7,7 +7,8 @@ export const MovieCard = ({ movie, onMovieClick }) => {
         onMovieClick(movie);
       }}
     >
-      {movie.title}
+      <img src={movie.image} alt={movie.title} />
+      <h3>{movie.title}</h3>
     </div>
   );
 };
