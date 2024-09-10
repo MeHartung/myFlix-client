@@ -15,24 +15,39 @@ export const LoginView = ({ onLoggedIn }) => {
     fetch("https://openlibrary.org/account/login.json", {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json' // Ensure content type is set for JSON
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data) // Automatically set the correct Content-Type header
     })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Login response: ", data);
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
-        onLoggedIn(data.user, data.token);
-      } else {
-        alert("No such user");
-      }
-    })
-    .catch((e) => {
-      alert("Something went wrong");
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        
+        // Ensure the response contains text to be parsed
+        return response.text(); // Get the response as text
+      })
+      .then((text) => {
+        // If text is not empty, parse it as JSON
+        if (text) {
+          return JSON.parse(text); // Convert to JSON
+        }
+        throw new Error("Empty response");
+      })
+      .then((data) => {
+        console.log("Login response: ", data);
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          localStorage.setItem("token", data.token);
+          onLoggedIn(data.user, data.token);
+        } else {
+          alert("No such user");
+        }
+      })
+      .catch((e) => {
+        console.error("Something went wrong", e);
+        alert("Something went wrong");
+      });
   };
 
   return (
@@ -59,3 +74,4 @@ export const LoginView = ({ onLoggedIn }) => {
     </form>
   );
 };
+
