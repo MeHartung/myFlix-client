@@ -29,7 +29,7 @@ export const LoginView = ({ onLoggedIn }) => {
       if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        onLoggedIn(data.user);
+        onLoggedIn(data.user, data.token);
       }
     })
     .catch((e) => {
