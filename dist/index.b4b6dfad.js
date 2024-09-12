@@ -27379,9 +27379,9 @@ var _signupView = require("../signup-view/signup-view");
 var _s = $RefreshSig$();
 const MainView = ()=>{
     _s();
-    const storedUser = localStorage.getItem("user");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
     const storedToken = localStorage.getItem("token");
-    const [user, setUser] = (0, _react.useState)(storedUser ? JSON.parse(storedUser) : null);
+    const [user, setUser] = (0, _react.useState)(storedUser ? storedUser : null);
     const [token, setToken] = (0, _react.useState)(storedToken ? storedToken : null);
     const [movies, setMovies] = (0, _react.useState)([]);
     const [selectedMovie, setSelectedMovie] = (0, _react.useState)(null);
@@ -27415,24 +27415,25 @@ const MainView = ()=>{
     const handleBackClick = ()=>{
         setSelectedMovie(null);
     };
+    // If the user is not logged in, show the login/signup view
     if (!user) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _loginView.LoginView), {
                 onLoggedIn: (user, token)=>{
                     setUser(user);
                     setToken(token);
-                    localStorage.setItem("user", JSON.stringify(user));
+                    localStorage.setItem("user", JSON.stringify(user)); // Store user and token
                     localStorage.setItem("token", token);
                 }
             }, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 52,
+                lineNumber: 54,
                 columnNumber: 9
             }, undefined),
             "or",
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _signupView.SignupView), {}, void 0, false, {
                 fileName: "src/components/main-view/main-view.jsx",
-                lineNumber: 59,
+                lineNumber: 61,
                 columnNumber: 9
             }, undefined)
         ]
@@ -27443,7 +27444,7 @@ const MainView = ()=>{
             onBackClick: handleBackClick
         }, void 0, false, {
             fileName: "src/components/main-view/main-view.jsx",
-            lineNumber: 67,
+            lineNumber: 69,
             columnNumber: 9
         }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
             children: [
@@ -27456,36 +27457,36 @@ const MainView = ()=>{
                     children: "Logout"
                 }, void 0, false, {
                     fileName: "src/components/main-view/main-view.jsx",
-                    lineNumber: 70,
+                    lineNumber: 72,
                     columnNumber: 11
                 }, undefined),
                 movies.length === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                     children: "Loading movies..."
                 }, void 0, false, {
                     fileName: "src/components/main-view/main-view.jsx",
-                    lineNumber: 79,
+                    lineNumber: 81,
                     columnNumber: 13
                 }, undefined) : movies.map((movie)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _movieCardJsx.MovieCard), {
                         movie: movie,
                         onMovieClick: handleMovieClick
                     }, movie.id, false, {
                         fileName: "src/components/main-view/main-view.jsx",
-                        lineNumber: 82,
+                        lineNumber: 84,
                         columnNumber: 15
                     }, undefined))
             ]
         }, void 0, true, {
             fileName: "src/components/main-view/main-view.jsx",
-            lineNumber: 69,
+            lineNumber: 71,
             columnNumber: 9
         }, undefined)
     }, void 0, false, {
         fileName: "src/components/main-view/main-view.jsx",
-        lineNumber: 65,
+        lineNumber: 67,
         columnNumber: 5
     }, undefined);
 };
-_s(MainView, "cyQGeZ3vr5rc/qech1i0cJhmEEs=");
+_s(MainView, "9wJBvfUyU2IigbyWC+M5y3EH9h4=");
 _c = MainView;
 var _c;
 $RefreshReg$(_c, "MainView");
