@@ -30830,10 +30830,10 @@ const MovieView = ({ movie, onBackClick })=>{
                             }, void 0, false, {
                                 fileName: "src/components/movie-view/movie-view.jsx",
                                 lineNumber: 17,
-                                columnNumber: 11
+                                columnNumber: 9
                             }, undefined),
                             " ",
-                            movie.director
+                            movie.director?.Name
                         ]
                     }, void 0, true, {
                         fileName: "src/components/movie-view/movie-view.jsx",
@@ -30847,10 +30847,10 @@ const MovieView = ({ movie, onBackClick })=>{
                             }, void 0, false, {
                                 fileName: "src/components/movie-view/movie-view.jsx",
                                 lineNumber: 20,
-                                columnNumber: 11
+                                columnNumber: 9
                             }, undefined),
                             " ",
-                            movie.genre
+                            movie.genre?.Name
                         ]
                     }, void 0, true, {
                         fileName: "src/components/movie-view/movie-view.jsx",
