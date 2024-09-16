@@ -1,25 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { MovieCard } from '../movie-card/movie-card.jsx';
-import { MovieView } from '../movie-view/movie-view.jsx';
+import React, { useState, useEffect } from "react";
+import { MovieCard } from "../movie-card/movie-card.jsx";
+import { MovieView } from "../movie-view/movie-view.jsx";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
+import { ProfileView } from "../profile-view/profile-view";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col"; 
+import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export const MainView = () => {
-  let storedUser = null;
-  try {
-    const userFromStorage = localStorage.getItem("user");
-    if (userFromStorage) {
-      storedUser = JSON.parse(userFromStorage);
-    }
-  } catch (e) {
-    console.error("Error parsing stored user", e);
-  }
-
+  const storedUser = JSON.parse(localStorage.getItem("user"));
   const storedToken = localStorage.getItem("token");
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
@@ -28,7 +20,7 @@ export const MainView = () => {
   useEffect(() => {
     if (!token) return;
 
-    fetch('https://movies-flix-hartung-46febebee5c5.herokuapp.com/movies', {
+    fetch("https://movies-flix-hartung-46febebee5c5.herokuapp.com/movies", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => response.json())
@@ -46,7 +38,7 @@ export const MainView = () => {
         setMovies(moviesFromApi);
       })
       .catch((error) => {
-        console.error('Error fetching movies:', error);
+        console.error("Error fetching movies:", error);
       });
   }, [token]);
 
@@ -56,29 +48,8 @@ export const MainView = () => {
     localStorage.clear();
   };
 
-  if (!user) {
-    return (
-      <Container>
-        <Row className="justify-content-md-center">
-          <Col md={5}>
-            <LoginView
-              onLoggedIn={(user, token) => {
-                setUser(user);
-                setToken(token);
-                localStorage.setItem("user", JSON.stringify(user));
-                localStorage.setItem("token", token);
-              }}
-            />
-            <p>or</p>
-            <SignupView />
-          </Col>
-        </Row>
-      </Container>
-    );
-  }
-
   return (
-    <BrowserRouter>
+    <>
       <NavigationBar user={user} onLoggedOut={handleLoggedOut} />
       <Container>
         <Row className="justify-content-md-center">
@@ -86,21 +57,44 @@ export const MainView = () => {
             <Route
               path="/login"
               element={
-                <Col md={5}>
-                  <LoginView
-                    onLoggedIn={(user, token) => {
-                      setUser(user);
-                      setToken(token);
-                      localStorage.setItem("user", JSON.stringify(user));
-                      localStorage.setItem("token", token);
-                    }}
-                  />
-                </Col>
+                !user ? (
+                  <Col md={5}>
+                    <LoginView
+                      onLoggedIn={(user, token) => {
+                        setUser(user);
+                        setToken(token);
+                        localStorage.setItem("user", JSON.stringify(user));
+                        localStorage.setItem("token", token);
+                      }}
+                    />
+                  </Col>
+                ) : (
+                  <Navigate to="/" />
+                )
               }
             />
-            <Route path="/signup" element={<SignupView />} />
-            
-            {}
+            <Route
+              path="/signup"
+              element={
+                !user ? (
+                  <Col md={5}>
+                    <SignupView />
+                  </Col>
+                ) : (
+                  <Navigate to="/" />
+                )
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                user ? (
+                  <ProfileView user={user} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
             <Route
               path="/movies/:movieId"
               element={
@@ -113,33 +107,29 @@ export const MainView = () => {
                 )
               }
             />
-
-            {}
             <Route
               path="/"
               element={
-                <>
-                  <button
-                    className="btn btn-secondary mb-4"
-                    onClick={handleLoggedOut}
-                  >
-                    Logout
-                  </button>
-                  {movies.length === 0 ? (
-                    <p>Loading movies...</p>
-                  ) : (
-                    movies.map((movie) => (
-                      <Col className="mb-5" key={movie.id} md={3}>
-                        <MovieCard movie={movie} />
-                      </Col>
-                    ))
-                  )}
-                </>
+                user ? (
+                  <>
+                    {movies.length === 0 ? (
+                      <p>Loading movies...</p>
+                    ) : (
+                      movies.map((movie) => (
+                        <Col className="mb-5" key={movie.id} md={3}>
+                          <MovieCard movie={movie} />
+                        </Col>
+                      ))
+                    )}
+                  </>
+                ) : (
+                  <Navigate to="/login" />
+                )
               }
             />
           </Routes>
         </Row>
       </Container>
-    </BrowserRouter>
+    </>
   );
 };

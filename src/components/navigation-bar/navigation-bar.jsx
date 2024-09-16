@@ -1,19 +1,39 @@
-import { createRoot } from "react-dom/client";
+import { Navbar, Container, Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-import { MainView } from "./components/main-view/main-view";
-import Container from "react-bootstrap/Container";
-
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./index.scss";
-
-const App = () => {
+export const NavigationBar = ({ user, onLoggedOut }) => {
   return (
-    <Container>
-      <MainView />
-    </Container>
+    <Navbar bg="light" expand="lg">
+      <Container>
+        <Navbar.Brand as={Link} to="/">
+          MyFlix App
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            {!user ? (
+              <>
+                <Nav.Link as={Link} to="/login">
+                  Login
+                </Nav.Link>
+                <Nav.Link as={Link} to="/signup">
+                  Signup
+                </Nav.Link>
+              </>
+            ) : (
+              <>
+                <Nav.Link as={Link} to="/">
+                  Home
+                </Nav.Link>
+                <Nav.Link as={Link} to="/profile">
+                  Profile
+                </Nav.Link>
+                <Nav.Link onClick={onLoggedOut}>Logout</Nav.Link>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
-
-const container = document.querySelector("#root");
-const root = createRoot(container);
-root.render(<App />);
