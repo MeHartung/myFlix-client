@@ -4,8 +4,10 @@ import { MovieView } from '../movie-view/movie-view.jsx';
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col"; // Import Col
+import Col from "react-bootstrap/Col"; 
 import Container from "react-bootstrap/Container";
+import { NavigationBar } from "../navigation-bar/navigation-bar";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 export const MainView = () => {
   let storedUser = null;
@@ -22,7 +24,6 @@ export const MainView = () => {
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [movies, setMovies] = useState([]);
-  const [selectedMovie, setSelectedMovie] = useState(null);
 
   useEffect(() => {
     if (!token) return;
@@ -30,31 +31,29 @@ export const MainView = () => {
     fetch('https://movies-flix-hartung-46febebee5c5.herokuapp.com/movies', {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => response.json())
-    .then((data) => {
-      const moviesFromApi = data.map((movie) => {
-        return {
-          id: movie._id,
-          title: movie.Title,
-          image: movie.ImagePath || "https://via.placeholder.com/150",
-          director: movie.Director || "Unknown Director",
-          description: movie.Description || "No description available",
-          genre: movie.Genre || "Unknown genre",
-        };
+      .then((response) => response.json())
+      .then((data) => {
+        const moviesFromApi = data.map((movie) => {
+          return {
+            id: movie._id,
+            title: movie.Title,
+            image: movie.ImagePath || "https://via.placeholder.com/150",
+            director: movie.Director || "Unknown Director",
+            description: movie.Description || "No description available",
+            genre: movie.Genre || "Unknown genre",
+          };
+        });
+        setMovies(moviesFromApi);
+      })
+      .catch((error) => {
+        console.error('Error fetching movies:', error);
       });
-      setMovies(moviesFromApi);
-    })
-    .catch((error) => {
-      console.error('Error fetching movies:', error);
-    });
   }, [token]);
 
-  const handleMovieClick = (movie) => {
-    setSelectedMovie(movie);
-  };
-
-  const handleBackClick = () => {
-    setSelectedMovie(null);
+  const handleLoggedOut = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.clear();
   };
 
   if (!user) {
@@ -62,12 +61,14 @@ export const MainView = () => {
       <Container>
         <Row className="justify-content-md-center">
           <Col md={5}>
-            <LoginView onLoggedIn={(user, token) => {
-              setUser(user);
-              setToken(token);
-              localStorage.setItem("user", JSON.stringify(user));
-              localStorage.setItem("token", token);
-            }} />
+            <LoginView
+              onLoggedIn={(user, token) => {
+                setUser(user);
+                setToken(token);
+                localStorage.setItem("user", JSON.stringify(user));
+                localStorage.setItem("token", token);
+              }}
+            />
             <p>or</p>
             <SignupView />
           </Col>
@@ -77,41 +78,68 @@ export const MainView = () => {
   }
 
   return (
-    <Container>
-      <Row className="justify-content-md-center">
-        {selectedMovie ? (
-          <Col md={12}>
-            <MovieView movie={selectedMovie} onBackClick={handleBackClick} />
-          </Col>
-        ) : (
-          <>
-            <button
-              className="btn btn-secondary mb-4"
-              onClick={() => {
-                setUser(null);
-                setToken(null);
-                localStorage.clear();
-              }}
-            >
-              Logout
-            </button>
-            {movies.length === 0 ? (
-              <p>Loading movies...</p>
-            ) : (
-              movies.map((movie) => (
-                <Col className="mb-5" key={movie.id} md={3}>
-                  <MovieCard
-                    movie={movie}
-                    onMovieClick={(newSelectedMovie) => {
-                      setSelectedMovie(newSelectedMovie);
+    <BrowserRouter>
+      <NavigationBar user={user} onLoggedOut={handleLoggedOut} />
+      <Container>
+        <Row className="justify-content-md-center">
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <Col md={5}>
+                  <LoginView
+                    onLoggedIn={(user, token) => {
+                      setUser(user);
+                      setToken(token);
+                      localStorage.setItem("user", JSON.stringify(user));
+                      localStorage.setItem("token", token);
                     }}
                   />
                 </Col>
-              ))
-            )}
-          </>
-        )}
-      </Row>
-    </Container>
+              }
+            />
+            <Route path="/signup" element={<SignupView />} />
+            
+            {}
+            <Route
+              path="/movies/:movieId"
+              element={
+                movies.length === 0 ? (
+                  <p>Loading movies...</p>
+                ) : (
+                  <Col md={8}>
+                    <MovieView movies={movies} />
+                  </Col>
+                )
+              }
+            />
+
+            {}
+            <Route
+              path="/"
+              element={
+                <>
+                  <button
+                    className="btn btn-secondary mb-4"
+                    onClick={handleLoggedOut}
+                  >
+                    Logout
+                  </button>
+                  {movies.length === 0 ? (
+                    <p>Loading movies...</p>
+                  ) : (
+                    movies.map((movie) => (
+                      <Col className="mb-5" key={movie.id} md={3}>
+                        <MovieCard movie={movie} />
+                      </Col>
+                    ))
+                  )}
+                </>
+              }
+            />
+          </Routes>
+        </Row>
+      </Container>
+    </BrowserRouter>
   );
 };

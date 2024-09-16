@@ -1,14 +1,15 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import Button from 'react-bootstrap/Button';
+import React from "react";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import Button from "react-bootstrap/Button";
 
-export const MovieView = ({ movie, onBackClick }) => {
+export const MovieView = ({ movie }) => {
   return (
     <div>
       <img
         src={movie.image}
         alt={movie.title}
-        style={{ width: "100%", height: "auto" }} 
+        style={{ width: "100%", height: "auto" }}
       />
       <div>
         <h2>{movie.title}</h2>
@@ -19,7 +20,11 @@ export const MovieView = ({ movie, onBackClick }) => {
         <p>
           <strong>Genre: </strong> {movie.genre}
         </p>
-        <Button onClick={onBackClick}>Back</Button>
+
+        {}
+        <Link to="/">
+          <Button>Back</Button>
+        </Link>
       </div>
     </div>
   );
@@ -33,5 +38,4 @@ MovieView.propTypes = {
     description: PropTypes.string.isRequired,
     genre: PropTypes.string.isRequired,
   }).isRequired,
-  onBackClick: PropTypes.func.isRequired,
 };
