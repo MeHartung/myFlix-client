@@ -2,8 +2,15 @@ import { useParams } from "react-router";
 import { Link } from "react-router-dom";
 import "./movie-view.scss";
 
-export const MovieView = ({ movies }) => {
+export const MovieView = ({ movies, user, token, setUser }) => {
   const { movieId } = useParams(); 
+
+  console.log("User object: ", user);
+
+  if (!user || !user.Username) {
+    console.error("User object or Username is undefined");
+    return <p>User is not logged in or data is incomplete.</p>;
+  }
 
   const movie = movies.find((b) => b.id === movieId);
 
@@ -11,33 +18,73 @@ export const MovieView = ({ movies }) => {
   console.log("Movie ID from URL: ", movieId);
   console.log("Found movie: ", movie);
 
+ 
+  console.log("User object: ", user);
+
+  if (!user || !user.Username) {
+    console.error("User object or Username is undefined");
+    return <p>User is not logged in or data is incomplete.</p>;
+  }
+
+
+  const isFavorite = user?.FavoriteMovies?.includes(movieId) || false;
+
+  
+  const handleFavorite = () => {
+    const method = isFavorite ? 'DELETE' : 'POST'; 
+    fetch(`https://movies-flix-hartung-46febebee5c5.herokuapp.com/users/${user.Username}/movies/${movie.id}`, {
+      method,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(updatedUser => {
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      })
+      .catch(err => console.error('Error updating favorite movies:', err));
+  };
+
+  if (!movie) {
+    return <p>Movie not found or loading...</p>;
+  }
+
   return (
     <div>
-     <div>
-        <img className="w-100" src={movie.image} />
+      <div>
+        <img className="w-100" src={movie.image} alt={movie.title} />
       </div>
       <div>
-      <span>Title: </span>
-      <span>{movie.title}</span>
+        <span>Title: </span>
+        <span>{movie.title}</span>
+      </div>
       <div>
-      <span>Description:</span>
+        <span>Description: </span>
         <p>{movie.description}</p>
-        </div>
-        <div>
+      </div>
+      <div>
         <span>Director: </span>
         <span>{movie.director}</span>
-        </div>
-        <p>
-        <span>Genre : </span>
-        <span>{movie.genre}</span>
-        </p>
-        <p>
-        <span>Actors : </span>
-        <span>{movie.actors}</span>
-        </p>
       </div>
+      <div>
+        <span>Genre: </span>
+        <span>{movie.genre}</span>
+      </div>
+      <div>
+        <span>Actors: </span>
+        <span>{Array.isArray(movie.actors) ? movie.actors.join(", ") : "N/A"}</span>
+      </div>
+
+      {}
+      <button onClick={handleFavorite} className="btn btn-primary mt-3">
+        {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+      </button>
+
+      {}
       <Link to="/">
-        <button className="back-button">Back</button>
+        <button className="btn btn-secondary mt-3">Back</button>
       </Link>
     </div>
   );

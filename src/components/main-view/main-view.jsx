@@ -4,6 +4,7 @@ import { MovieView } from "../movie-view/movie-view.jsx";
 import { LoginView } from "../login-view/login-view";
 import { SignupView } from "../signup-view/signup-view";
 import { NavigationBar } from "../navigation-bar/navigation-bar";
+import { ProfileView } from "../profile-view/profile-view";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -14,6 +15,8 @@ export const MainView = () => {
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [movies, setMovies] = useState([]);
+
+  console.log("User in MainView: ", user);
 
   useEffect(() => {
     if (!token) return;
@@ -31,6 +34,7 @@ export const MainView = () => {
             director: movie.Director || "Unknown Director",
             description: movie.Description || "No description available",
             genre: movie.Genre || "Unknown genre",
+            actors: movie.Actors || [] 
           };
         });
         setMovies(moviesFromApi);
@@ -85,20 +89,32 @@ export const MainView = () => {
               )
             }
           />
+          <Route
+  path="/profile"
+  element={
+    user ? (
+      <Col md={8}>
+        <ProfileView user={user} token={token} movies={movies} setUser={setUser} />
+      </Col>
+    ) : (
+      <Navigate to="/login" />
+    )
+  }
+/>
 
           {}
           <Route
-            path="/movies/:movieId"
-            element={
-              movies.length === 0 ? (
-                <p>Loading movies...</p>
-              ) : (
-                <Col md={8}>
-                  <MovieView movies={movies} />
-                </Col>
-              )
-            }
-          />
+  path="/movies/:movieId"
+  element={
+    movies.length === 0 ? (
+      <p>Loading movies...</p>
+    ) : (
+      <Col md={8}>
+        <MovieView movies={movies} user={user} token={token} setUser={setUser} />
+      </Col>
+    )
+  }
+/>
 
           {}
           <Route
