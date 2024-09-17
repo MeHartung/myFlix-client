@@ -12,24 +12,17 @@ export const MovieView = ({ movies, user, token, setUser }) => {
     return <p>User is not logged in or data is incomplete.</p>;
   }
 
+
   const movie = movies.find((b) => b.id === movieId);
 
-  console.log("Movies array: ", movies);
-  console.log("Movie ID from URL: ", movieId);
-  console.log("Found movie: ", movie);
-
- 
-  console.log("User object: ", user);
-
-  if (!user || !user.Username) {
-    console.error("User object or Username is undefined");
-    return <p>User is not logged in or data is incomplete.</p>;
+  if (!movie) {
+    return <p>Movie not found or loading...</p>;
   }
 
+  console.log("Found movie: ", movie);
 
   const isFavorite = user?.FavoriteMovies?.includes(movieId) || false;
 
-  
   const handleFavorite = () => {
     const method = isFavorite ? 'DELETE' : 'POST'; 
     fetch(`https://movies-flix-hartung-46febebee5c5.herokuapp.com/users/${user.Username}/movies/${movie.id}`, {
@@ -47,10 +40,6 @@ export const MovieView = ({ movies, user, token, setUser }) => {
       .catch(err => console.error('Error updating favorite movies:', err));
   };
 
-  if (!movie) {
-    return <p>Movie not found or loading...</p>;
-  }
-
   return (
     <div>
       <div>
@@ -66,23 +55,21 @@ export const MovieView = ({ movies, user, token, setUser }) => {
       </div>
       <div>
         <span>Director: </span>
-        <span>{movie.director}</span>
+        <span>{movie.director?.Name || "Unknown Director"}</span> {}
       </div>
       <div>
         <span>Genre: </span>
-        <span>{movie.genre}</span>
+        <span>{movie.genre?.Name || "Unknown Genre"}</span> {}
       </div>
       <div>
         <span>Actors: </span>
         <span>{Array.isArray(movie.actors) ? movie.actors.join(", ") : "N/A"}</span>
       </div>
 
-      {}
       <button onClick={handleFavorite} className="btn btn-primary mt-3">
         {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
       </button>
 
-      {}
       <Link to="/">
         <button className="btn btn-secondary mt-3">Back</button>
       </Link>
