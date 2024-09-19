@@ -135,12 +135,13 @@ export const MainView = () => {
                   ) : (
                     <>
                       <Form.Control
-                        type="text"
-                        placeholder="Search for a movie"
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)} 
-                        className="mb-4"
-                      />
+  type="text"
+  placeholder="Search for a movie"
+  value={filter}
+  onChange={(e) => setFilter(e.target.value)}
+  className="mb-4"
+  style={{ width: '300px', margin: '20px auto', display: 'block' }} 
+/>
                       {filteredMovies.length === 0 ? (
                         <p>No movies found</p>
                       ) : (
