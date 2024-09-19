@@ -8,6 +8,7 @@ import { ProfileView } from "../profile-view/profile-view";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Form from "react-bootstrap/Form"; 
 
 export const MainView = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -15,8 +16,7 @@ export const MainView = () => {
   const [user, setUser] = useState(storedUser ? storedUser : null);
   const [token, setToken] = useState(storedToken ? storedToken : null);
   const [movies, setMovies] = useState([]);
-
-  console.log("User in MainView: ", user);
+  const [filter, setFilter] = useState(""); 
 
   useEffect(() => {
     if (!token) return;
@@ -50,12 +50,16 @@ export const MainView = () => {
     localStorage.clear();
   };
 
+ 
+  const filteredMovies = movies.filter((movie) =>
+    movie.title.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
     <BrowserRouter>
       <NavigationBar user={user} onLoggedOut={handleLoggedOut} />
       <Row className="justify-content-md-center">
         <Routes>
-          {}
           <Route
             path="/signup"
             element={
@@ -68,8 +72,6 @@ export const MainView = () => {
               )
             }
           />
-
-          {}
           <Route
             path="/login"
             element={
@@ -90,33 +92,39 @@ export const MainView = () => {
             }
           />
           <Route
-  path="/profile"
-  element={
-    user ? (
-      <Col md={8}>
-        <ProfileView user={user} token={token} movies={movies} setUser={setUser} />
-      </Col>
-    ) : (
-      <Navigate to="/login" />
-    )
-  }
-/>
-
-          {}
+            path="/profile"
+            element={
+              user ? (
+                <Col md={8}>
+                  <ProfileView
+                    user={user}
+                    token={token}
+                    movies={movies}
+                    setUser={setUser}
+                  />
+                </Col>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
           <Route
-  path="/movies/:movieId"
-  element={
-    movies.length === 0 ? (
-      <p>Loading movies...</p>
-    ) : (
-      <Col md={8}>
-        <MovieView movies={movies} user={user} token={token} setUser={setUser} />
-      </Col>
-    )
-  }
-/>
-
-          {}
+            path="/movies/:movieId"
+            element={
+              movies.length === 0 ? (
+                <p>Loading movies...</p>
+              ) : (
+                <Col md={8}>
+                  <MovieView
+                    movies={movies}
+                    user={user}
+                    token={token}
+                    setUser={setUser}
+                  />
+                </Col>
+              )
+            }
+          />
           <Route
             path="/"
             element={
@@ -125,11 +133,24 @@ export const MainView = () => {
                   {movies.length === 0 ? (
                     <p>Loading movies...</p>
                   ) : (
-                    movies.map((movie) => (
-                      <Col className="mb-5" key={movie.id} md={3}>
-                        <MovieCard movie={movie} />
-                      </Col>
-                    ))
+                    <>
+                      <Form.Control
+                        type="text"
+                        placeholder="Search for a movie"
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)} 
+                        className="mb-4"
+                      />
+                      {filteredMovies.length === 0 ? (
+                        <p>No movies found</p>
+                      ) : (
+                        filteredMovies.map((movie) => (
+                          <Col className="mb-5" key={movie.id} md={3}>
+                            <MovieCard movie={movie} />
+                          </Col>
+                        ))
+                      )}
+                    </>
                   )}
                 </>
               ) : (
