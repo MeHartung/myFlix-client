@@ -134,17 +134,17 @@ export const MainView = () => {
                   ) : (
                     <>
                       <Row className="justify-content-md-center">
-                        <Col md={6}> {}
-                          <Form.Control
-                            type="text"
-                            placeholder="Search for a movie"
-                            value={filter}
-                            onChange={(e) => setFilter(e.target.value)}
-                            className="mb-4"
-                            style={{ width: '100%' }} 
-                          />
-                        </Col>
-                      </Row>
+  <Col md={6}> {}
+    <Form.Control
+      type="text"
+      placeholder="Search for a movie"
+      value={filter}
+      onChange={(e) => setFilter(e.target.value)}
+      className="mb-4"
+      style={{ width: '100%', marginTop: '20px' }} 
+    />
+  </Col>
+</Row>
 
                       {filteredMovies.length === 0 ? (
                         <p>No movies found</p>
