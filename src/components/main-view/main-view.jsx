@@ -50,7 +50,6 @@ export const MainView = () => {
     localStorage.clear();
   };
 
- 
   const filteredMovies = movies.filter((movie) =>
     movie.title.toLowerCase().includes(filter.toLowerCase())
   );
@@ -134,22 +133,29 @@ export const MainView = () => {
                     <p>Loading movies...</p>
                   ) : (
                     <>
-                      <Form.Control
-  type="text"
-  placeholder="Search for a movie"
-  value={filter}
-  onChange={(e) => setFilter(e.target.value)}
-  className="mb-4"
-  style={{ width: '300px', margin: '20px auto', display: 'block' }} 
-/>
+                      <Row className="justify-content-md-center">
+                        <Col md={6}> {}
+                          <Form.Control
+                            type="text"
+                            placeholder="Search for a movie"
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                            className="mb-4"
+                            style={{ width: '100%' }} 
+                          />
+                        </Col>
+                      </Row>
+
                       {filteredMovies.length === 0 ? (
                         <p>No movies found</p>
                       ) : (
-                        filteredMovies.map((movie) => (
-                          <Col className="mb-5" key={movie.id} md={3}>
-                            <MovieCard movie={movie} />
-                          </Col>
-                        ))
+                        <Row>
+                          {filteredMovies.map((movie) => (
+                            <Col className="mb-5" key={movie.id} md={3}>
+                              <MovieCard movie={movie} />
+                            </Col>
+                          ))}
+                        </Row>
                       )}
                     </>
                   )}
